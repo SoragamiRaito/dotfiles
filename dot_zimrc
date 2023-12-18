@@ -1,0 +1,18 @@
+zmodule zsh-users/zsh-completions --fpath src
+zmodule completion
+zmodule zsh-users/zsh-syntax-highlighting
+zmodule zsh-users/zsh-history-substring-search
+# ↑lock
+zmodule fzf
+zmodule asdf
+zmodule utility
+zmodule run-help
+zmodule ssh
+zmodule input
+zmodule environment
+zmodule git
+zmodule archive
+zmodule b4b4r07/enhancd --source init.sh
+zmodule exa
+# most bottom
+zmodule zsh-users/zsh-autosuggestions

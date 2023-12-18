@@ -1,0 +1,82 @@
+export LANG=C.UTF-8
+# # set PATH so it includes user's private bin if it exists
+if [[ -d ${HOME}/bin ]]; then
+    PATH="${HOME}/bin:$PATH"
+fi
+
+# # set PATH so it includes user's private bin if it exists
+if [[ -d ${HOME}/.local/bin ]]; then
+    PATH="${HOME}/.local/bin:$PATH"
+fi
+
+# homebrew
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# starship
+eval "$(starship init zsh)"
+# asdf
+. /home/linuxbrew/.linuxbrew/opt/asdf/libexec/asdf.sh
+# aqua
+export PATH="${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua}/bin:$PATH"
+
+# zshcompletion file
+fpath=(${HOME}/.local/share/completion $fpath)
+source ${HOME}/.local/share/docker-fzf/docker-fzf.zsh
+
+# history
+setopt HIST_IGNORE_ALL_DUPS
+setopt hist_expand
+setopt share_history
+setopt CORRECT
+
+# Customize spelling correction prompt.
+SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
+# Remove path separator from WORDCHARS.
+WORDCHARS=${WORDCHARS//[\/]}
+
+# set ZIM_HOME
+ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
+# Download zimfw plugin manager if missing.
+if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
+    curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh \
+        https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
+fi
+# Install missing modules, and update ${ZIM_HOME}/init.zsh if missing or outdated.
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
+    source ${ZIM_HOME}/zimfw.zsh init -q
+fi
+
+# bindkey
+bindkey -v
+# Bind ^[[A/^[[B manually so up/down works both before and after zle-line-init
+for key ('^[[A' ${terminfo[kcuu1]}) bindkey ${key} history-substring-search-up
+for key ('^[[B' ${terminfo[kcud1]}) bindkey ${key} history-substring-search-down
+for key ('k') bindkey -M vicmd ${key} history-substring-search-up
+for key ('j') bindkey -M vicmd ${key} history-substring-search-down
+
+# zsh-syntax-highlight-theme
+if [[ ! -f ${XDG_CONFIG_HOME:-${HOME}/.config}/catppuccin_mocha-zsh-syntax-highlighting.zsh ]]; then
+    # download themefile
+    curl -fsSJL --create-dirs -o ${XDG_CONFIG_HOME:-${HOME}/.config}/catppuccin_mocha-zsh-syntax-highlighting.zsh https://github.com/catppuccin/zsh-syntax-highlighting/raw/main/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
+fi
+source ${XDG_CONFIG_HOME:-${HOME}/.config}/catppuccin_mocha-zsh-syntax-highlighting.zsh
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+# reset modules
+source ~/.fzf.zsh
+source ~/.zim/init.zsh
+
+# exa
+alias ll='ls -l --git --icons --color=always'
+alias lr='ll -T -L=3 | bat'
+alias lm='l | bat'
+
+# enhancd
+export ENHANCD_HOOK_AFTER_CD='ls --icons --git'
+export ENHANCD_DISABLE_DOT=1
+
+# fzf
+export FZF_COMPLETION_TRIGGER="," #  defalut:**
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
