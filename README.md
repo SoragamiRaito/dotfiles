@@ -1,6 +1,6 @@
 # dotfiles
 dotfiles用リポジトリ。  
-chezmoi[chezmoi.io](chezmoi.io)で管理してます。
+[chezmoi.io](chezmoi.io)で管理してます。
 
 ## quick start
 以下コマンドをシェルに流す。
